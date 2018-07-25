@@ -5,11 +5,7 @@ import android.graphics.drawable.AnimationDrawable
 import android.graphics.drawable.Drawable
 import android.support.constraint.ConstraintLayout
 import android.support.constraint.ConstraintSet
-import android.support.constraint.ConstraintSet.BOTTOM
-import android.support.constraint.ConstraintSet.END
-import android.support.constraint.ConstraintSet.PARENT_ID
-import android.support.constraint.ConstraintSet.START
-import android.support.constraint.ConstraintSet.TOP
+import android.support.constraint.ConstraintSet.*
 import android.support.v4.content.ContextCompat
 import android.support.v7.widget.AppCompatButton
 import android.support.v7.widget.AppCompatImageView
@@ -89,6 +85,14 @@ open class Chameleon(context: Context?, attrs: AttributeSet?) : ConstraintLayout
                                 it.getBoolean(R.styleable.Chameleon_useErrorButton, false),
                                 it.getDrawable(R.styleable.Chameleon_progressDrawable),
                                 it.getBoolean(R.styleable.Chameleon_isLargeProgress, false),
+                                true,
+                                it.getString(R.styleable.Chameleon_loadingText) ?: "loading",
+                                it.getColor(R.styleable.Chameleon_loadingTextColor, ContextCompat.getColor(context, R.color.colorTitleText)),
+                                it.getDimension(R.styleable.Chameleon_loadingTextSize, context.resources.getDimension(R.dimen.title_text_size)),
+                                it.getString(R.styleable.Chameleon_loadingSubText)
+                                        ?: "now loading...",
+                                it.getColor(R.styleable.Chameleon_loadingSubTextColor, ContextCompat.getColor(context, R.color.colorSubText)),
+                                it.getDimension(R.styleable.Chameleon_loadingSubTextSize, context.resources.getDimension(R.dimen.sub_text_size)),
                                 stateFromInt(it.getInt(R.styleable.Chameleon_defaultState, -1))
                         )
             }
@@ -144,6 +148,8 @@ open class Chameleon(context: Context?, attrs: AttributeSet?) : ConstraintLayout
 
             showState(it.defaultState)
         }
+        val hasLoadingMessage = chameleonAttr?.hasLoadingMessage ?: false
+
         val constraintSet = ConstraintSet()
         constraintSet.clone(this)
 
@@ -169,6 +175,14 @@ open class Chameleon(context: Context?, attrs: AttributeSet?) : ConstraintLayout
         constraintSet.connect(R.id.bt_state, BOTTOM, PARENT_ID, BOTTOM)
         constraintSet.connect(R.id.bt_state, END, PARENT_ID, END)
         constraintSet.setVerticalBias(R.id.bt_state, 0f)
+
+        val constraintID = if (hasLoadingMessage) R.id.iv_state else PARENT_ID
+        constraintSet.connect(R.id.pb_state, TOP, constraintID, TOP)
+        constraintSet.connect(R.id.pb_state, START, constraintID, START)
+        constraintSet.connect(R.id.pb_state, BOTTOM, constraintID, BOTTOM)
+        constraintSet.connect(R.id.pb_state, END, constraintID, END)
+
+
 
         constraintSet.applyTo(this)
 
@@ -201,8 +215,6 @@ open class Chameleon(context: Context?, attrs: AttributeSet?) : ConstraintLayout
         }
         val layoutParams = ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.WRAP_CONTENT,
                 ConstraintLayout.LayoutParams.WRAP_CONTENT)
-        layoutParams.startToStart = ConstraintLayout.LayoutParams.PARENT_ID
-        layoutParams.endToEnd = ConstraintLayout.LayoutParams.PARENT_ID
         layoutParams.verticalChainStyle = ConstraintLayout.LayoutParams.CHAIN_PACKED
         super.addView(stateImageView, layoutParams)
     }
@@ -219,8 +231,6 @@ open class Chameleon(context: Context?, attrs: AttributeSet?) : ConstraintLayout
         }
         val layoutParams = ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.WRAP_CONTENT,
                 ConstraintLayout.LayoutParams.WRAP_CONTENT)
-        layoutParams.startToStart = ConstraintLayout.LayoutParams.PARENT_ID
-        layoutParams.endToEnd = ConstraintLayout.LayoutParams.PARENT_ID
         super.addView(stateTitleTextView, layoutParams)
     }
 
@@ -236,8 +246,6 @@ open class Chameleon(context: Context?, attrs: AttributeSet?) : ConstraintLayout
         }
         val layoutParams = ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.WRAP_CONTENT,
                 ConstraintLayout.LayoutParams.WRAP_CONTENT)
-        layoutParams.startToStart = ConstraintLayout.LayoutParams.PARENT_ID
-        layoutParams.endToEnd = ConstraintLayout.LayoutParams.PARENT_ID
         super.addView(stateSubTextView, layoutParams)
     }
 
@@ -259,10 +267,6 @@ open class Chameleon(context: Context?, attrs: AttributeSet?) : ConstraintLayout
         }
         val layoutParams = ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.WRAP_CONTENT,
                 ConstraintLayout.LayoutParams.WRAP_CONTENT)
-        layoutParams.startToStart = ConstraintLayout.LayoutParams.PARENT_ID
-        layoutParams.endToEnd = ConstraintLayout.LayoutParams.PARENT_ID
-        layoutParams.topToTop = ConstraintLayout.LayoutParams.PARENT_ID
-        layoutParams.bottomToBottom = ConstraintLayout.LayoutParams.PARENT_ID
         super.addView(stateProgressBar, layoutParams)
     }
 

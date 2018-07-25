@@ -32,5 +32,12 @@ data class ChameleonAttr(var emptyText: String,
                          var useErrorButton:Boolean,
                          var progressDrawable: Drawable?,
                          var isLargeProgress: Boolean,
+                         var hasLoadingMessage:Boolean,
+                         var loadingText: String,
+                         var loadingTextColor: Int,
+                         var loadingTextSize: Float,
+                         var loadingSubText: String,
+                         var loadingSubTextColor: Int,
+                         var loadingSubTextSize: Float,
                          var defaultState: Chameleon.STATE
 )
